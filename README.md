@@ -1,8 +1,8 @@
-# vegamcache
+# vegamcache 
 vegamcache is a distributed in-memory cache built using gossip protocol for golang.
 
 # what is the difference between other distributed cache service?
-In vegamcache, network calls are not used for retriving data from other nodes. Instead data will be replicated across the node using gossip in backgroud.
+In vegamcache, network calls are not used for retriving data for each Get. Instead data will be replicated across the node using gossip in backgroud.
 
 # seri why ?
 Go is fun. I learned lot of thing regarding distributed system and also I'm jobless. Looking for internship. If anyone interested, do ping me at rbalajis25@gmail.com
