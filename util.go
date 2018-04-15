@@ -19,8 +19,8 @@ func mustHardwareAddr() string {
 	panic("no valid network interfaces")
 }
 
-func decodeSet(buf []byte) (map[string]LastWrite, error) {
-	var set map[string]LastWrite
+func decodeSet(buf []byte) (map[string]Value, error) {
+	var set map[string]Value
 	if err := gob.NewDecoder(bytes.NewReader(buf)).Decode(&set); err != nil {
 		return nil, err
 	}

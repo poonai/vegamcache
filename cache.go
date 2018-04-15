@@ -8,16 +8,15 @@ import (
 	"github.com/weaveworks/mesh"
 )
 
-type LastWrite struct {
-	Value     string
+type Value struct {
+	Data      string
 	LastWrite int64
 }
 type cache struct {
 	sync.Mutex
-	set map[string]LastWrite
+	set map[string]Value
 }
 
-// state implements GossipData.
 var _ mesh.GossipData = &cache{}
 
 func (c *cache) Encode() [][]byte {
@@ -44,7 +43,7 @@ func (c *cache) Merge(other mesh.GossipData) mesh.GossipData {
 	return c
 }
 
-func (c *cache) mergeDelta(set map[string]LastWrite) (delta mesh.GossipData) {
+func (c *cache) mergeDelta(set map[string]Value) (delta mesh.GossipData) {
 	for k, v := range set {
 		val, ok := c.set[k]
 		if ok && val.LastWrite > v.LastWrite {
@@ -59,7 +58,7 @@ func (c *cache) mergeDelta(set map[string]LastWrite) (delta mesh.GossipData) {
 	return &cache{set: set}
 }
 
-func (c *cache) mergeRecived(set map[string]LastWrite) (recived mesh.GossipData) {
+func (c *cache) mergeRecived(set map[string]Value) (recived mesh.GossipData) {
 	for k, v := range set {
 		val, ok := c.set[k]
 		if ok && val.LastWrite > v.LastWrite {
@@ -74,26 +73,23 @@ func (c *cache) mergeRecived(set map[string]LastWrite) (recived mesh.GossipData)
 	return &cache{set: set}
 }
 
-func (c *cache) Copy() *cache {
+func (c *cache) copy() *cache {
 	return &cache{
 		set: c.set,
 	}
 }
 
-func (c *cache) Get(key string) (val string) {
+func (c *cache) get(key string) (val string) {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
-		return val.Value
+		return val.Data
 	}
 	return ""
 }
 
-func (c *cache) Put(key, val string, writetime int64) {
+func (c *cache) put(key string, val Value) {
 	c.Lock()
 	defer c.Unlock()
-	c.set[key] = LastWrite{
-		Value:     val,
-		LastWrite: writetime,
-	}
+	c.set[key] = val
 }
