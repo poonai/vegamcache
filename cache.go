@@ -17,6 +17,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"sync"
+	"time"
 
 	"github.com/weaveworks/mesh"
 )
@@ -24,6 +25,7 @@ import (
 type Value struct {
 	Data      []byte
 	LastWrite int64
+	Expiry    int64
 }
 type cache struct {
 	sync.Mutex
@@ -96,7 +98,10 @@ func (c *cache) get(key string) []byte {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
-		return val.Data
+		if val.Expiry > time.Now().UnixNano() {
+			return val.Data
+		}
+		return nil
 	}
 	return nil
 }

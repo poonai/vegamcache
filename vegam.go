@@ -99,10 +99,11 @@ func (v *vegam) Get(key string) (val []byte) {
 	return
 }
 
-func (v *vegam) Put(key string, val []byte) {
+func (v *vegam) Put(key string, val []byte, expiry time.Duration) {
 	tempVal := Value{
 		Data:      val,
-		LastWrite: time.Now().Unix(),
+		LastWrite: time.Now().UnixNano(),
+		Expiry:    time.Now().Add(expiry).UnixNano(),
 	}
 	v.peer.cache.put(key, tempVal)
 	tempCache := &cache{

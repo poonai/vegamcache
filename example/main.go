@@ -53,7 +53,7 @@ func main() {
 			PeerName: "00:00:00:00:00:02",
 			Peers:    []string{"localhost:8087"}})
 		vg.Start()
-		vg.Put("foo", []byte("bar"))
+		vg.Put("foo", []byte("bar"), time.Second*200)
 		fmt.Print(vg.Get("foo"))
 		stop := make(chan int)
 		<-stop
