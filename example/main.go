@@ -37,7 +37,7 @@ func main() {
 			for _ = range ticker.C {
 				val := vg.Get("foo")
 				if string(val) == "bar" {
-					fmt.Println(val)
+					fmt.Println(string(val))
 					fmt.Println("value got from another node")
 					ticker.Stop()
 				} else {
