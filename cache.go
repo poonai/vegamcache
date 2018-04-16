@@ -9,7 +9,7 @@ import (
 )
 
 type Value struct {
-	Data      string
+	Data      []byte
 	LastWrite int64
 }
 type cache struct {
@@ -79,13 +79,13 @@ func (c *cache) copy() *cache {
 	}
 }
 
-func (c *cache) get(key string) (val string) {
+func (c *cache) get(key string) []byte {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
 		return val.Data
 	}
-	return ""
+	return nil
 }
 
 func (c *cache) put(key string, val Value) {

@@ -81,12 +81,12 @@ func (v *vegam) Stop() {
 	v.router.Stop()
 }
 
-func (v *vegam) Get(key string) (val string) {
+func (v *vegam) Get(key string) (val []byte) {
 	val = v.peer.cache.get(key)
 	return
 }
 
-func (v *vegam) Put(key, val string) {
+func (v *vegam) Put(key string, val []byte) {
 	tempVal := Value{
 		Data:      val,
 		LastWrite: time.Now().Unix(),
