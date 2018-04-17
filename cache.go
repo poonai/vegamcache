@@ -34,6 +34,26 @@ type cache struct {
 
 var _ mesh.GossipData = &cache{}
 
+type externalCache struct {
+	*cache
+}
+
+func NewCache() *externalCache {
+	return &externalCache{&cache{
+		set: make(map[string]Value),
+	}}
+}
+
+func (ec *externalCache) Get(key string) (interface{}, bool) {
+	return ec.cache.get(key)
+}
+
+func (ec *externalCache) Put(key string, val interface{}, ttl time.Duration) {
+	ec.cache.put(key, Value{
+		Data:   val,
+		Expiry: time.Now().Add(ttl).UnixNano(),
+	})
+}
 func (c *cache) Encode() [][]byte {
 	c.Lock()
 	defer c.Unlock()
