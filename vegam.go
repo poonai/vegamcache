@@ -94,12 +94,12 @@ func (v *vegam) Stop() {
 	v.router.Stop()
 }
 
-func (v *vegam) Get(key string) (val []byte) {
-	val = v.peer.cache.get(key)
+func (v *vegam) Get(key string) (val interface{}, exist bool) {
+	val, exist = v.peer.cache.get(key)
 	return
 }
 
-func (v *vegam) Put(key string, val []byte, expiry time.Duration) {
+func (v *vegam) Put(key string, val interface{}, expiry time.Duration) {
 	tempVal := Value{
 		Data:      val,
 		LastWrite: time.Now().UnixNano(),

@@ -35,9 +35,9 @@ func main() {
 		ticker := time.NewTicker(500 * time.Millisecond)
 		go func() {
 			for _ = range ticker.C {
-				val := vg.Get("foo")
-				if string(val) == "bar" {
-					fmt.Println(string(val))
+				val, exist := vg.Get("foo")
+				if exist && val.(string) == "bar" {
+					fmt.Println(val)
 					fmt.Println("value got from another node")
 					ticker.Stop()
 				} else {
@@ -53,7 +53,7 @@ func main() {
 			PeerName: "00:00:00:00:00:02",
 			Peers:    []string{"localhost:8087"}})
 		vg.Start()
-		vg.Put("foo", []byte("bar"), time.Second*200)
+		vg.Put("foo", "bar", time.Second*200)
 		fmt.Print(vg.Get("foo"))
 		stop := make(chan int)
 		<-stop

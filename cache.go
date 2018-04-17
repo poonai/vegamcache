@@ -23,7 +23,7 @@ import (
 )
 
 type Value struct {
-	Data      []byte
+	Data      interface{}
 	LastWrite int64
 	Expiry    int64
 }
@@ -95,16 +95,16 @@ func (c *cache) copy() *cache {
 	}
 }
 
-func (c *cache) get(key string) []byte {
+func (c *cache) get(key string) (interface{}, bool) {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
 		if val.Expiry > time.Now().UnixNano() {
-			return val.Data
+			return val.Data, true
 		}
-		return nil
+		return nil, false
 	}
-	return nil
+	return nil, false
 }
 
 func (c *cache) put(key string, val Value) {
