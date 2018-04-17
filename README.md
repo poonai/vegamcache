@@ -13,6 +13,37 @@ Go is fun. I learned lot of thing regarding distributed system and also I'm jobl
  
 # Need to be done
 - sharding the cache instead of storing it in a single hashmap
-- adding expiry time
 - small garbage collector to remove the expired value
 - benchmarking against other cache service
+
+# Example
+
+## Clustered Cache
+
+```go
+vg, err := vegamcache.NewVegam(&vegamcache.VegamConfig{Port: 8087,
+            PeerName: "00:00:00:00:00:01",
+            Peers: []string{"remoteip1:port","remoteip2:port"},
+			Logger:   log.New(ioutil.Discard, "", 0)})
+vg.Start()
+defer vg.Stop()
+if err != nil {
+    panic(err)
+}
+vg.Put("foo", "bar", time.Second*200)
+val, exist := vg.Get("foo")
+if exist {
+    fmt.Println(val)
+}
+```
+
+## Single Node Cache
+
+```go
+vg := vegamcache.NewCache()
+vg.Put("foo", "bar", time.Second*200)
+val, exist := vg.Get("foo")
+if exist {
+    fmt.Println(val)
+}
+```

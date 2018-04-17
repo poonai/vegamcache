@@ -35,7 +35,7 @@ type cache struct {
 var _ mesh.GossipData = &cache{}
 
 type externalCache struct {
-	*cache
+	cache *cache
 }
 
 func NewCache() *externalCache {

@@ -58,4 +58,8 @@ func main() {
 		stop := make(chan int)
 		<-stop
 	}
+	// vg := vegamcache.NewCache()
+	// vg.Put("foo", "bar", 5*time.Second)
+	// val, _ := vg.Get("foo")
+	// fmt.Print(val)
 }
