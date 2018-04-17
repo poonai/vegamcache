@@ -45,9 +45,13 @@ func (c *cache) Encode() [][]byte {
 }
 
 func (c *cache) Merge(other mesh.GossipData) mesh.GossipData {
+	return c.mergeComplete(other.(*cache).copy().set)
+}
+
+func (c *cache) mergeComplete(other map[string]Value) mesh.GossipData {
 	c.Lock()
 	defer c.Unlock()
-	for k, v := range other.(*cache).set {
+	for k, v := range other {
 		val, ok := c.set[k]
 		if ok && val.LastWrite < v.LastWrite {
 			c.set[k] = v
@@ -66,9 +70,6 @@ func (c *cache) mergeDelta(set map[string]Value) (delta mesh.GossipData) {
 			continue
 		}
 		c.set[k] = v
-	}
-	if len(set) == 0 {
-		return nil
 	}
 	return &cache{set: set}
 }

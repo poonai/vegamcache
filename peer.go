@@ -48,6 +48,6 @@ func (p *peer) OnGossipUnicast(src mesh.PeerName, buf []byte) error {
 	if err != nil {
 		return err
 	}
-	p.cache.mergeRecived(set)
+	p.cache.mergeComplete(set)
 	return nil
 }
