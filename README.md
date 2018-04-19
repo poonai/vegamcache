@@ -47,3 +47,7 @@ if exist {
     fmt.Println(val)
 }
 ```
+
+# Contribution
+
+Feel free to send PR. :)
