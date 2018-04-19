@@ -79,11 +79,20 @@ func (c *cache) mergeComplete(other map[string]Value) mesh.GossipData {
 	defer c.Unlock()
 	for k, v := range other {
 		val, ok := c.set[k]
-		if ok && val.LastWrite < v.LastWrite {
+		if !ok {
+			if v.Expiry < time.Now().UnixNano() {
+				continue
+			}
+			c.set[k] = v
+		}
+		// checking existing expiry
+		if val.Expiry < time.Now().UnixNano() {
+			delete(c.set, k)
+		}
+		if val.LastWrite < v.LastWrite {
 			c.set[k] = v
 			continue
 		}
-		c.set[k] = v
 	}
 	return c
 }
@@ -92,6 +101,11 @@ func (c *cache) mergeDelta(set map[string]Value) (delta mesh.GossipData) {
 	for k, v := range set {
 		val, ok := c.set[k]
 		if ok && val.LastWrite > v.LastWrite {
+			delete(set, k)
+			continue
+		}
+		// expired value is not added
+		if val.Expiry != 0 && val.Expiry < time.Now().UnixNano() {
 			delete(set, k)
 			continue
 		}
@@ -104,6 +118,11 @@ func (c *cache) mergeRecived(set map[string]Value) (recived mesh.GossipData) {
 	for k, v := range set {
 		val, ok := c.set[k]
 		if ok && val.LastWrite > v.LastWrite {
+			delete(set, k)
+			continue
+		}
+		// expired value is not added
+		if val.Expiry != 0 && val.Expiry < time.Now().UnixNano() {
 			delete(set, k)
 			continue
 		}
