@@ -4,6 +4,7 @@ vegamcache is a distributed in-memory cache built using gossip protocol for gola
 # what is the difference between other distributed cache service?
 In vegamcache, network calls are not used for retriving data for each Get. Instead data will be replicated across the node using gossip in backgroud.
 
+Expired keys are removed on gossip instead of having a seperate GC.
 # seri why ?
 Go is fun. I learned lot of thing regarding distributed system and also I'm jobless. Looking for internship. If anyone interested, do ping me at rbalajis25@gmail.com
 
@@ -13,7 +14,6 @@ Go is fun. I learned lot of thing regarding distributed system and also I'm jobl
  
 # Need to be done
 - sharding the cache instead of storing it in a single hashmap
-- small garbage collector to remove the expired value
 - benchmarking against other cache service
 
 # Example
