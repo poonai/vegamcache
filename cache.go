@@ -49,9 +49,15 @@ func (ec *externalCache) Get(key string) (interface{}, bool) {
 }
 
 func (ec *externalCache) Put(key string, val interface{}, ttl time.Duration) {
+	var expiryTime int64
+	if ttl == 0 {
+		expiryTime = 0
+	} else {
+		expiryTime = time.Now().Add(ttl).UnixNano()
+	}
 	ec.cache.put(key, Value{
 		Data:   val,
-		Expiry: time.Now().Add(ttl).UnixNano(),
+		Expiry: expiryTime,
 	})
 }
 func (c *cache) Encode() [][]byte {
@@ -119,9 +125,13 @@ func (c *cache) get(key string) (interface{}, bool) {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
+		if val.Expiry == 0 {
+			return val.Data, true
+		}
 		if val.Expiry > time.Now().UnixNano() {
 			return val.Data, true
 		}
+		delete(c.set, key)
 		return nil, false
 	}
 	return nil, false

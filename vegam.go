@@ -100,10 +100,16 @@ func (v *vegam) Get(key string) (val interface{}, exist bool) {
 }
 
 func (v *vegam) Put(key string, val interface{}, expiry time.Duration) {
+	var expiryTime int64
+	if expiry == 0 {
+		expiryTime = 0
+	} else {
+		expiryTime = time.Now().Add(expiry).UnixNano()
+	}
 	tempVal := Value{
 		Data:      val,
 		LastWrite: time.Now().UnixNano(),
-		Expiry:    time.Now().Add(expiry).UnixNano(),
+		Expiry:    expiryTime,
 	}
 	v.peer.cache.put(key, tempVal)
 	tempCache := &cache{
