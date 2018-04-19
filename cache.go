@@ -125,10 +125,7 @@ func (c *cache) get(key string) (interface{}, bool) {
 	c.Lock()
 	defer c.Unlock()
 	if val, ok := c.set[key]; ok {
-		if val.Expiry == 0 {
-			return val.Data, true
-		}
-		if val.Expiry > time.Now().UnixNano() {
+		if val.Expiry == 0 || val.Expiry > time.Now().UnixNano() {
 			return val.Data, true
 		}
 		delete(c.set, key)
