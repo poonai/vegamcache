@@ -14,10 +14,12 @@ limitations under the License.
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/sch00lb0y/vegamcache"
@@ -49,12 +51,31 @@ func main() {
 		<-stop
 	} else {
 		fmt.Print("PUT IS RUNNING")
-		vg, _ := vegamcache.NewVegam(&vegamcache.VegamConfig{Port: 8081,
-			PeerName: "00:00:00:00:00:02",
-			Peers:    []string{"localhost:8087"}})
+		vg, _ := vegamcache.NewVegam(&vegamcache.VegamConfig{Port: 8082,
+			PeerName: "00:00:00:00:00:02"})
 		vg.Start()
 		vg.Put("foo", "bar", time.Second*200)
 		fmt.Print(vg.Get("foo"))
+		go vegamcache.ListenServer(vg, ":8000")
+		req, _ := http.NewRequest("PATCH", "http://localhost:8000/update", bytes.NewBuffer(
+			[]byte(`{
+				"peers":[
+					"localhost:8087"
+				]
+			}`),
+		))
+		req.Header.Set("Content-Type", "application/json")
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+
+		fmt.Println("response Status:", resp.Status)
+		fmt.Println("response Headers:", resp.Header)
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("response Body:", string(body))
 		stop := make(chan int)
 		<-stop
 	}

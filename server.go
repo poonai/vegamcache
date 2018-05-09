@@ -56,9 +56,7 @@ func updateHandler(v *vegam) func(w http.ResponseWriter, r *http.Request) {
 			}))
 			return
 		}
-		v.Stop()
-		v.peers = peers.Peers
-		v.Start()
+		v.router.ConnectionMaker.InitiateConnections(peers.Peers, true)
 		w.Write(marshal(UpdateResponse{
 			Updated: true,
 		}))
