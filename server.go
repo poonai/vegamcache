@@ -34,7 +34,7 @@ func marshal(data interface{}) []byte {
 	}
 	return marshaledData
 }
-func updateHandler(v *vegam) func(w http.ResponseWriter, r *http.Request) {
+func updateHandler(v *Vegam) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var peers UpdateRequest
 		defer r.Body.Close()
@@ -63,7 +63,7 @@ func updateHandler(v *vegam) func(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-func ListenServer(v *vegam, port string) error {
+func ListenServer(v *Vegam, port string) error {
 	http.HandleFunc("/update", updateHandler(v))
 	return http.ListenAndServe(port, nil)
 }
