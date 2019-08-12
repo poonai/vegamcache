@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sch00lb0y/vegamcache"
+	"github.com/balajijinnah/vegamcache"
 )
 
 func main() {
